@@ -61,16 +61,18 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
-yMat=zeros(m,num_labels);
+yMat=zeros(m,num_labels);%5000*10
 for i=1:m
     yMat(i,y(i))=1;
 end
 
 a1=[ones(m,1) X];%5000*401
 z2=Theta1*(a1');%25*5000
-a2=sigmoid(z2);
-z3=[ones(1,m);a2];
-a3=sigmoid(Theta2*z3);
+a2=[ones(1,m);sigmoid(z2)];%26*5000
+
+z3=Theta2*a2;%10*5000
+%Theta2:10*26
+a3=sigmoid(z3);%10*5000
 hMat=a3;
 J=-(sum(sum(yMat.*(log(hMat)')))+sum(sum((1-yMat).*(log(1-hMat)'))))/m;
 
@@ -80,15 +82,26 @@ J=J+ lambda*((sum(sum(Theta1(:,2:input_layer_size+1).^2))+sum(sum(Theta2(:,2:hid
 
 
 
-% bp algrithm
-Delta1=zeros
+% bp algorithm
+Delta1=zeros(size(Theta1));
+Delta2=zeros(size(Theta2));
+
+for i=1:m
+    delta3=(a3(:,i)-yMat(i,:)');%10*1
+    delta2=(Theta2(:,2:end)'*delta3).*sigmoidGradient(z2(:,i));%25*1
+    %ofcourse the bias unit's error is zero, but it should be caculated in
+    %bp algorithm
+    Delta2=Delta2+delta3*(a2(:,i)');
+    Delta1=Delta1+delta2*(a1(i,:));
+end
+Theta2_grad=Delta2/m;
+Theta1_grad=Delta1/m;
+
+%regularization of bp algorithm
 
 
-
-
-
-
-
+Theta2_grad(:,2:end)=Theta2_grad(:,2:end)+Theta2(:,2:end)*lambda/m;
+Theta1_grad(:,2:end)=Theta1_grad(:,2:end)+Theta1(:,2:end)*lambda/m;
 
 
 
