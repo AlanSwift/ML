@@ -1,4 +1,4 @@
-import numpy,re
+import numpy as np,re
 
 class svm:
     def __init__(self):
@@ -19,19 +19,28 @@ class svm:
                 data.append(lineData[0:len(lineData)-1])
                 label.append(lineData[-1])
                 print(line)
-        self.dataMat=numpy.mat(data)
-        self.labelVec=numpy.mat(label).transpose()
+        self.dataMat=np.mat(data)
+        self.labelVec=np.mat(label).transpose()
 
-    def calc(self,maxIter=100):
+    def __getFunctionValue(self,i):
+        return float(np.multiply(self.alpha,self.labelVec).T*self.dataMat*(self.dataMat[i,:].T))
+
+    def calc(self,C,tol,maxIter=100):
         '''
         This function is smo algorithm
         Must be called for caculation
         :return:
         '''
-        m,n=numpy.shape(self.dataMat)# m train example, n features
-        self.alpha=numpy.shape(numpy.zeros(m,1))
+        m,n=np.shape(self.dataMat)# m train example, n features
+        self.alpha=np.shape(np.zeros(m,1))
+        self.alpha=np.mat(np.zeros((m,1)))
+        self.b=0
         for iter in range(0,maxIter):
-            
+            for i in range(0,m):
+                fxi=self.__getFunctionValue(i)
+                Exi=fxi-float(self.labelVec[i])
+
+            pass
 
 
 
